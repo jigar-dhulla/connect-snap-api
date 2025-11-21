@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -45,5 +47,22 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function profiles(): HasMany
+    {
+        return $this->hasMany(Profile::class);
+    }
+
+    public function profileForEvent(Event $event): ?Profile
+    {
+        return $this->profiles()->where('event_id', $event->id)->first();
+    }
+
+    public function events(): BelongsToMany
+    {
+        return $this->belongsToMany(Event::class, 'profiles')
+            ->withPivot(['phone', 'company', 'job_title', 'bio', 'profile_photo', 'social_url', 'qr_code_hash', 'registered_at'])
+            ->withTimestamps();
     }
 }

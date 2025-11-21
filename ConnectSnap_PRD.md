@@ -183,42 +183,81 @@ GET    /api/u/{qr_hash}  // Public profile view (no auth required)
 
 ## Database Schema
 
-### users
+### events
+```sql
+id                BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT
+name              VARCHAR(255) NOT NULL
+slug              VARCHAR(255) UNIQUE NOT NULL
+description       TEXT NULL
+location          VARCHAR(255) NULL
+starts_at         TIMESTAMP NULL
+ends_at           TIMESTAMP NULL
+is_active         BOOLEAN DEFAULT TRUE
+created_at        TIMESTAMP
+updated_at        TIMESTAMP
+
+INDEX idx_slug (slug)
+INDEX idx_active (is_active)
+```
+
+**MVP Seed Data:**
+- Name: "Laravel Bengaluru Nov 2025"
+- Slug: "laravel-bengaluru-nov-2025"
+- is_active: true
+
+### users (auth only)
 ```sql
 id                 BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT
 name               VARCHAR(255) NOT NULL
 email              VARCHAR(255) UNIQUE NOT NULL
-phone              VARCHAR(20) NULL
-company            VARCHAR(255) NULL
-job_title          VARCHAR(255) NULL
-bio                TEXT NULL
-profile_photo      VARCHAR(255) NULL
-social_url         VARCHAR(255) NULL
-qr_code_hash       VARCHAR(64) UNIQUE NOT NULL
 email_verified_at  TIMESTAMP NULL
 password           VARCHAR(255) NOT NULL
 remember_token     VARCHAR(100) NULL
 created_at         TIMESTAMP
 updated_at         TIMESTAMP
 
-INDEX idx_qr_hash (qr_code_hash)
 INDEX idx_email (email)
 ```
 
-### connections
+### profiles (event-specific user data)
 ```sql
 id                BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT
-scanner_user_id   BIGINT UNSIGNED NOT NULL
-scanned_user_id   BIGINT UNSIGNED NOT NULL
-notes             TEXT NULL
-met_at            TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+event_id          BIGINT UNSIGNED NOT NULL
+user_id           BIGINT UNSIGNED NOT NULL
+phone             VARCHAR(20) NULL
+company           VARCHAR(255) NULL
+job_title         VARCHAR(255) NULL
+bio               TEXT NULL
+profile_photo     VARCHAR(255) NULL
+social_url        VARCHAR(255) NULL
+qr_code_hash      VARCHAR(64) UNIQUE NOT NULL
+registered_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 created_at        TIMESTAMP
 updated_at        TIMESTAMP
 
-FOREIGN KEY (scanner_user_id) REFERENCES users(id) ON DELETE CASCADE
-FOREIGN KEY (scanned_user_id) REFERENCES users(id) ON DELETE CASCADE
-INDEX idx_scanner (scanner_user_id)
-INDEX idx_scanned (scanned_user_id)
+FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+UNIQUE idx_event_user (event_id, user_id)
+INDEX idx_qr_hash (qr_code_hash)
+```
+
+**MVP Behavior:** Auto-create profile for default event on user signup.
+
+### connections
+```sql
+id                   BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT
+scanner_profile_id   BIGINT UNSIGNED NOT NULL
+scanned_profile_id   BIGINT UNSIGNED NOT NULL
+notes                TEXT NULL
+met_at               TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+created_at           TIMESTAMP
+updated_at           TIMESTAMP
+
+FOREIGN KEY (scanner_profile_id) REFERENCES profiles(id) ON DELETE CASCADE
+FOREIGN KEY (scanned_profile_id) REFERENCES profiles(id) ON DELETE CASCADE
+INDEX idx_scanner (scanner_profile_id)
+INDEX idx_scanned (scanned_profile_id)
+UNIQUE idx_unique_connection (scanner_profile_id, scanned_profile_id)
 ```
 
 ### personal_access_tokens (Sanctum)
@@ -313,8 +352,8 @@ Laravel Sanctum auto-creates this table
 
 ### QR Code Hash Generation
 ```php
-// On user registration
-$user->qr_code_hash = Str::random(32);
+// On profile creation (auto-created for default event on signup)
+$profile->qr_code_hash = Str::random(32);
 ```
 
 ### QR Code Format

@@ -44,13 +44,22 @@ Public:      GET /api/u/{qr_hash}  (no auth)
 
 ### Database Schema
 
-**users** - Extends default with: phone, company, job_title, bio, profile_photo, social_url, qr_code_hash (unique)
+**events** - name, slug (unique), description, location, starts_at, ends_at, is_active
+- MVP: Single hard-coded event "Laravel Bengaluru Nov 2025" (no CRUD)
 
-**connections** - scanner_user_id, scanned_user_id, notes, met_at
+**users** - Auth only: name, email, password, email_verified_at
+
+**profiles** - Event-specific user data: event_id, user_id, phone, company, job_title, bio, profile_photo, social_url, qr_code_hash
+- Unique constraint on (event_id, user_id)
+- QR code is per-profile (unique per event)
+- MVP: Auto-create profile for default event on signup
+
+**connections** - scanner_profile_id, scanned_profile_id, notes, met_at
+- Unique constraint on (scanner_profile_id, scanned_profile_id)
 
 ### Key Implementation Details
 
-- **QR Hash:** `Str::random(32)` on registration
+- **QR Hash:** `Str::random(32)` on profile creation
 - **QR Format:** `connectsnap://u/{qr_code_hash}`
 - **Notes:** Private to scanner, 500 char max, encrypted at rest
 - **Auth Header:** `Authorization: Bearer {token}`
