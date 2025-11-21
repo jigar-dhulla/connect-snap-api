@@ -291,7 +291,7 @@
                         </svg>
                     </summary>
                     <div class="px-6 pb-4 text-gray-600">
-                        They'll see your public profile information (name, company, job title, bio, phone, and social link). They can save you as a connection on their side.
+                        They'll see your public profile information (name, company, job title, bio, and social link). They can save you as a connection on their side.
                     </div>
                 </details>
                 <details class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden group">
