@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ConnectionController;
 use App\Http\Controllers\Api\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,4 +20,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/photo', [ProfileController::class, 'uploadPhoto'])->name('profile.photo');
     Route::get('/profile/qr-code', [ProfileController::class, 'qrCode'])->name('profile.qr-code');
+
+    Route::post('/connections/scan', [ConnectionController::class, 'scan'])->name('connections.scan');
+    Route::get('/connections', [ConnectionController::class, 'index'])->name('connections.index');
+    Route::get('/connections/{id}', [ConnectionController::class, 'show'])->name('connections.show');
+    Route::put('/connections/{id}/notes', [ConnectionController::class, 'updateNotes'])->name('connections.notes');
+    Route::delete('/connections/{id}', [ConnectionController::class, 'destroy'])->name('connections.destroy');
 });
+
+Route::get('/u/{qr_hash}', [ProfileController::class, 'publicProfile'])->name('profile.public');

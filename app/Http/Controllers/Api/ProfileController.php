@@ -81,6 +81,32 @@ class ProfileController extends Controller
         ]);
     }
 
+    public function publicProfile(string $qr_hash): JsonResponse
+    {
+        $profile = Profile::where('qr_code_hash', $qr_hash)
+            ->with(['user', 'event'])
+            ->first();
+
+        if (! $profile) {
+            return response()->json([
+                'message' => 'Profile not found.',
+            ], 404);
+        }
+
+        return response()->json([
+            'data' => [
+                'name' => $profile->user->name,
+                'company' => $profile->company,
+                'job_title' => $profile->job_title,
+                'bio' => $profile->bio,
+                'profile_photo_url' => $profile->profile_photo
+                    ? Storage::disk('public')->url($profile->profile_photo)
+                    : null,
+                'social_url' => $profile->social_url,
+            ],
+        ]);
+    }
+
     protected function getOrCreateProfile(): Profile
     {
         $user = auth()->user();
