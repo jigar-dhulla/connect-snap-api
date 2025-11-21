@@ -44,7 +44,7 @@ Public:      GET /api/u/{qr_hash}  (no auth)
 
 ### Database Schema
 
-**users** - Extends default with: phone, company, job_title, bio, profile_photo, linkedin_url, qr_code_hash (unique)
+**users** - Extends default with: phone, company, job_title, bio, profile_photo, social_url, qr_code_hash (unique)
 
 **connections** - scanner_user_id, scanned_user_id, notes, met_at
 
@@ -54,6 +54,28 @@ Public:      GET /api/u/{qr_hash}  (no auth)
 - **QR Format:** `connectsnap://u/{qr_code_hash}`
 - **Notes:** Private to scanner, 500 char max, encrypted at rest
 - **Auth Header:** `Authorization: Bearer {token}`
+
+## Style Guide
+
+### Brand Colors
+- **Tech Blue:** #005A9C (primary)
+- **Tech Blue Light:** #0073C4 (hover states)
+- **Tech Blue Dark:** #004578 (active states)
+- **Background:** #FFFFFF (white)
+
+### Typography
+- **Font Family:** Montserrat (sans-serif)
+- **Logo Text:** "Connect" (bold) + "Snap" (light weight)
+
+### Logo
+- Location: `/public/logo.jpeg`
+- QR code icon with "ConnectSnap" wordmark
+
+### UI Patterns
+- Cards: White background, subtle border (`border-gray-100`), `rounded-xl`, `shadow-md`
+- Badges/Tags: Tech Blue at 10% opacity background (`bg-tech-blue/10`), Tech Blue text
+- Icons: Tech Blue stroke, 2px weight
+- Buttons: Tech Blue background, white text, rounded
 
 ---
 

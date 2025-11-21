@@ -110,7 +110,7 @@ Steps:
 - Job Title (optional)
 - Bio (optional, 250 chars)
 - Profile Photo (optional, 2MB max)
-- LinkedIn URL (optional)
+- Social URL (optional) - LinkedIn, Linktree, or any preferred link
 - QR Code Hash (auto-generated, unique)
 
 **QR Code:**
@@ -193,7 +193,7 @@ company            VARCHAR(255) NULL
 job_title          VARCHAR(255) NULL
 bio                TEXT NULL
 profile_photo      VARCHAR(255) NULL
-linkedin_url       VARCHAR(255) NULL
+social_url         VARCHAR(255) NULL
 qr_code_hash       VARCHAR(64) UNIQUE NOT NULL
 email_verified_at  TIMESTAMP NULL
 password           VARCHAR(255) NOT NULL
@@ -254,7 +254,7 @@ Laravel Sanctum auto-creates this table
 - Profile photo
 - Name, company, job title
 - Bio
-- Contact info (phone, LinkedIn)
+- Contact info (phone, social link)
 - Notes text area (500 chars)
 - "Save Connection" button
 
